@@ -9,26 +9,22 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useRouter } from 'expo-router';
 
-type AdminLoginScreenProps = {
-  navigation: NativeStackNavigationProp<any>;
-};
-
-const AdminLoginScreen = ({ navigation }: AdminLoginScreenProps) => {
-  
+export default function SignInScreen() {
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleAdminLogin = () => {
+  const handleSignIn = () => {
     if (!email || !password) {
       alert('Please fill in all fields!');
       return;
     }
-    // Handle admin login logic here
-    console.log('Admin login with:', email, password);
-    // Navigate to admin dashboard after successful login
-    navigation.replace('adminDashboard');
+    // Handle sign in logic here
+    console.log('Sign in with:', email, password);
+    // Navigate to main app after successful sign in
+    router.replace('/productScreen');
   };
 
   return (
@@ -38,16 +34,16 @@ const AdminLoginScreen = ({ navigation }: AdminLoginScreenProps) => {
         style={styles.container}
       >
         <View style={styles.formContainer}>
-          <Text style={styles.title}>Admin Login</Text>
+          <Text style={styles.title}>Welcome Back!</Text>
           
           <TextInput
             style={styles.input}
             placeholder="Email"
             value={email}
             onChangeText={setEmail}
+            keyboardType="email-address"
             autoCapitalize="none"
           />
-
           
           <TextInput
             style={styles.input}
@@ -59,15 +55,22 @@ const AdminLoginScreen = ({ navigation }: AdminLoginScreenProps) => {
           
           <TouchableOpacity 
             style={styles.button}
-            onPress={handleAdminLogin}
+            onPress={handleSignIn}
           >
-            <Text style={styles.buttonText}>Login as Admin</Text>
+            <Text style={styles.buttonText}>Sign In</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={styles.linkButton}
+            onPress={() => router.push('/signUp')}
+          >
+            <Text style={styles.linkText}>Don't have an account? Sign Up</Text>
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -95,7 +98,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   button: {
-    backgroundColor: '#FF3B30',
+    backgroundColor: '#007AFF',
     padding: 15,
     borderRadius: 10,
     alignItems: 'center',
@@ -106,6 +109,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
+  linkButton: {
+    marginTop: 15,
+    alignItems: 'center',
+  },
+  linkText: {
+    color: '#007AFF',
+    fontSize: 14,
+  },
 });
-
-export default AdminLoginScreen; 

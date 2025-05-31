@@ -8,26 +8,43 @@ import {
   SafeAreaView,
   KeyboardAvoidingView,
   Platform,
+  Alert,
+  ActivityIndicator,
 } from 'react-native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useRouter } from 'expo-router';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { getDoc, doc } from 'firebase/firestore';
+import { auth, db } from '../../firebase';
 
-type SignInScreenProps = {
-  navigation: NativeStackNavigationProp<any>;
-};
-
-const SignInScreen = ({ navigation }: SignInScreenProps) => {
+export default function AdminLoginScreen() {
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSignIn = () => {
+  const handleAdminLogin = async () => {
     if (!email || !password) {
-      alert('Please fill in all fields!');
+      alert('Error, Please fill in all fields!');
       return;
     }
-    // Handle sign in logic here
-    console.log('Sign in with:', email, password);
-    // Navigate to main app after successful sign in
-    navigation.replace('(tabs)');
+
+    // Check for specific admin credentials
+    if (email !== 'admin@gmail.com' || password !== 'admin123') {
+      alert('Error, Invalid admin credentials');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      alert('Success');
+      router.replace('/adminDashboard');
+    } catch (error) {
+      console.error('Error during admin login:', error);
+      Alert.alert('Error', error?.message || 'An error occurred during login');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -37,7 +54,7 @@ const SignInScreen = ({ navigation }: SignInScreenProps) => {
         style={styles.container}
       >
         <View style={styles.formContainer}>
-          <Text style={styles.title}>Welcome Back!</Text>
+          <Text style={styles.title}>Admin Login</Text>
           
           <TextInput
             style={styles.input}
@@ -46,6 +63,7 @@ const SignInScreen = ({ navigation }: SignInScreenProps) => {
             onChangeText={setEmail}
             keyboardType="email-address"
             autoCapitalize="none"
+            editable={!loading}
           />
           
           <TextInput
@@ -54,26 +72,25 @@ const SignInScreen = ({ navigation }: SignInScreenProps) => {
             value={password}
             onChangeText={setPassword}
             secureTextEntry
+            editable={!loading}
           />
           
           <TouchableOpacity 
-            style={styles.button}
-            onPress={handleSignIn}
+            style={[styles.button, loading && styles.buttonDisabled]}
+            onPress={handleAdminLogin}
+            disabled={loading}
           >
-            <Text style={styles.buttonText}>Sign In</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity 
-            style={styles.linkButton}
-            onPress={() => navigation.navigate('signUp')}
-          >
-            <Text style={styles.linkText}>Don't have an account? Sign Up</Text>
+            {loading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={styles.buttonText}>Login as Admin</Text>
+            )}
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -101,7 +118,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   button: {
-    backgroundColor: '#007AFF',
+    backgroundColor: '#FF3B30',
     padding: 15,
     borderRadius: 10,
     alignItems: 'center',
@@ -112,14 +129,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
-  linkButton: {
-    marginTop: 15,
-    alignItems: 'center',
+  buttonDisabled: {
+    backgroundColor: '#ccc',
   },
-  linkText: {
-    color: '#007AFF',
-    fontSize: 14,
-  },
-});
-
-export default SignInScreen;
+}); 

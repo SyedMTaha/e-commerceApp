@@ -2,8 +2,8 @@ import React from 'react';
 import {
   StyleSheet,
   View,
-  TouchableOpacity,
   Text,
+  TouchableOpacity,
   SafeAreaView,
   ImageBackground,
 } from 'react-native';
@@ -14,7 +14,6 @@ export default function HomeScreen() {
 
   return (
     <ImageBackground
-      //source={require('../assets/background.jpg')}
       style={styles.backgroundImage}
     >
       <SafeAreaView style={styles.container}>

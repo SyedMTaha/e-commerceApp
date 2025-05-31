@@ -14,7 +14,7 @@ import { useRouter } from 'expo-router';
 import { FirebaseError } from 'firebase/app';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
-import { auth, db } from '../../../firebase';
+import { auth, db } from '../../firebase';
 
 export default function SignUpScreen() {
   const router = useRouter();
@@ -47,9 +47,8 @@ export default function SignUpScreen() {
       console.log('User registered successfully!');
       router.push('/signIn');
     } catch (error) {
-      const firebaseError = error as FirebaseError;
-      console.error('Error during sign up:', firebaseError);
-      alert(firebaseError.message || 'An error occurred during sign up');
+      console.error('Error during sign up:', error);
+      alert(error?.message || 'An error occurred during sign up');
     } finally {
       setLoading(false);
     }
