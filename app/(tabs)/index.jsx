@@ -14,6 +14,7 @@ export default function HomeScreen() {
 
   return (
     <ImageBackground
+      source={require('../../assets/images/bg2.jpg')}
       style={styles.backgroundImage}
     >
       <SafeAreaView style={styles.container}>
